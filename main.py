@@ -25,8 +25,8 @@ scaled_training_set
 X_train = []
 Y_train = []
 for i in range(60, 1258):
-   X_train.append(scaled_training_set[i-60:i, 0])
-   Y_train.append(scaled_training_set[i:0])
+    X_train.append(scaled_training_set[i-60:i, 0])
+    Y_train.append(scaled_training_set[i:0])
 
 #set them into numpy arrays
 X_train, Y_train = np.array(X_train), np.array(Y_train)
@@ -54,9 +54,9 @@ regressor.add(Dropout(0.2))
 
 regressor.add(Dense(units=1))
 
-regressor.compile(optimizer="adam", loss="mean_squared_error")
+regressor.compile(optimizer='adam' , loss='mean_squared_error')
 
-regressor.fit(X_train, Y_train, epochs=200, batch_size=32)
+regressor.fit(X_train, Y_train, epochs=100, batch_size=32)
 
 #visualizing the data
 dataset_test = pd.read_csv('Google_Stock_Price_Test.csv')
@@ -64,10 +64,10 @@ real_stock_price = dataset_test.iloc[:, 1:2].values
 
 dataset_total = pd.concat((dataset_train['Open'], dataset_test['Open']), axis = 0)
 inputs = dataset_total[len(dataset_total) - len(dataset_test) - 60:].values #getting input of each previous financial days
-inputs = inputs.reshape(-1,1)
+inputs = inputs.reshape(-1, 1)
 inputs = scaler.transform(inputs)
 X_test = []
-for i in range(60, 150):
+for i in range(60, 80):
     X_test.append(inputs[i-60:i, 0])
 X_test = np.array(X_test)
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
