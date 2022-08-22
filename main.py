@@ -6,7 +6,7 @@ import numpy as np #making arrays
 import pandas as pd #for data management
 import matplotlib.pyplot as plt #for data visualization
 
-dataset_train = pd.read_csv("/Users/hoangcongtri/Desktop/CS/Python/GOOGStock-Price-Prediction/Google_Stock_Price_Train.csv")
+dataset_train = pd.read_csv("Google_Stock_Price_Train.csv")
 dataset_train.head()
 #Using Google's stock open price to train the model
 training_set= dataset_train.iloc[:, 1:2].values
@@ -49,7 +49,7 @@ regressor.add(Dropout(0.2))
 regressor.add(LSTM(units=50, return_sequences=True))
 regressor.add(Dropout(0.2))
 
-regressor.add(LSTM(units=50, return_sequences=True))
+regressor.add(LSTM(units = 50))
 regressor.add(Dropout(0.2))
 
 regressor.add(Dense(units=1))
@@ -57,6 +57,30 @@ regressor.add(Dense(units=1))
 regressor.compile(optimizer="adam", loss="mean_squared_error")
 
 regressor.fit(X_train, Y_train, epochs=200, batch_size=32)
+
+#visualizing the data
+dataset_test = pd.read_csv('Google_Stock_Price_Test.csv')
+real_stock_price = dataset_test.iloc[:, 1:2].values
+
+dataset_total = pd.concat((dataset_train['Open'], dataset_test['Open']), axis = 0)
+inputs = dataset_total[len(dataset_total) - len(dataset_test) - 60:].values #getting input of each previous financial days
+inputs = inputs.reshape(-1,1)
+inputs = scaler.transform(inputs)
+X_test = []
+for i in range(60, 150):
+    X_test.append(inputs[i-60:i, 0])
+X_test = np.array(X_test)
+X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+predicted_stock_price = regressor.predict(X_test)
+predicted_stock_price = scaler.inverse_transform(predicted_stock_price)
+
+plt.plot(real_stock_price, color = 'red', label = 'Real Google Stock Price')
+plt.plot(predicted_stock_price, color = 'blue', label = 'Predicted Google Stock Price')
+plt.title('Google Stock Price Prediction')
+plt.xlabel('Time')
+plt.ylabel('Google Stock Price')
+plt.legend()
+plt.show()
 
 
 
