@@ -6,7 +6,7 @@ import numpy as np #making arrays
 import pandas as pd #for data management
 import matplotlib.pyplot as plt #for data visualization
 
-dataset_train = pd.read_csv("Google_Stock_Price_Train.csv")
+dataset_train = pd.read_csv("GOOGL_Stock_Price_Train.csv")
 dataset_train.head()
 #Using Google's stock open price to train the model
 training_set= dataset_train.iloc[:, 1:2].values
@@ -64,7 +64,7 @@ regressor.compile(optimizer='adam', loss='mean_squared_error')
 regressor.fit(X_train, Y_train, epochs=100, batch_size=32)
 
 #visualizing the data
-dataset_test = pd.read_csv('Google_Stock_Price_Test.csv')
+dataset_test = pd.read_csv('GOOGL_Stock_Price_Test.csv')
 real_stock_price = dataset_test.iloc[:, 1:2].values
 
 dataset_total = pd.concat((dataset_train['Open'], dataset_test['Open']), axis = 0)
@@ -83,13 +83,17 @@ X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
 predicted_stock_price = regressor.predict(X_test)
 predicted_stock_price = scaler.inverse_transform(predicted_stock_price)
 
-plt.plot(real_stock_price, color = 'red', label = 'Real Google Stock Price')
+plt.plot(real_stock_price, color = 'red', label = 'Actual Google Stock Price')
 plt.plot(predicted_stock_price, color = 'blue', label = 'Predicted Google Stock Price')
 plt.title('Google Stock Price Prediction')
 plt.xlabel('Time')
 plt.ylabel('Google Stock Price')
 plt.legend()
 plt.show()
+
+from sklearn.metrics import accuracy_score
+print(accuracy_score(predicted_stock_price, real_stock_price))
+
 
 
 
